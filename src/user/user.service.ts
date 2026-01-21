@@ -71,6 +71,31 @@ export class UserService {
     return user;
   }
 
+  async updateUser(userId: number, updateUserDto: Partial<CreateUserDto>) {
+    const user = await this.findById(userId);
+
+    Object.assign(user, updateUserDto);
+
+    return await this.userRepository.save(user);
+  }
+
+  async findById(id: number): Promise<UserEntiry> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new HttpException(
+        `User With ID ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return user;
+  }
+
   generateToken(user: UserEntiry): string {
     return sign(
       {

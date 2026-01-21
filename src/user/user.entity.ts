@@ -3,9 +3,13 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { ArticleEntity } from '../article/article.entity';
 
 @Entity({ name: 'users' })
 export class UserEntiry {
@@ -16,7 +20,7 @@ export class UserEntiry {
   username: string;
 
   @Column()
-  email: string;
+  email?: string;
 
   @Column({ default: '' })
   bio: string;
@@ -26,6 +30,13 @@ export class UserEntiry {
 
   @Column()
   password?: string;
+
+  @OneToMany(() => ArticleEntity, (article) => article.author)
+  articles: ArticleEntity[];
+
+  @ManyToMany(() => ArticleEntity)
+  @JoinTable()
+  favourites: ArticleEntity[];
 
   @BeforeInsert()
   @BeforeUpdate()
